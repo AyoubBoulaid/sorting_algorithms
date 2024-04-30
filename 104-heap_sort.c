@@ -1,41 +1,70 @@
 #include "sort.h"
 /**
-  * heap_sort - heap sort algorithm
-  * @array: array to sort
-  * @size: size of array
-  */
+ * check_tree - swiftdown check
+ * @array: pointer to array
+ * @size: size of the pointer
+ * @size_init: original size of the array
+ * @i: index as a root of the tree
+ *
+**/
+void check_tree(int *array, size_t size_init, size_t size, size_t i)
+{
+
+	int n, branch1, branch2;
+	size_t br1, br2;
+
+	br1 = i * 2 + 1;
+	br2 = br1 + 1;
+	branch1 = array[br1];
+	branch2 = array[br2];
+	if (((br1 < size) && (br2 < size) &&
+		(branch1 >= branch2 && branch1 > array[i]))
+		|| ((br1 == size - 1) && branch1 > array[i]))
+	{
+		n = array[i];
+		array[i] = branch1;
+		array[br1] = n;
+		print_array(array, size_init);
+	}
+	else if ((br1 < size) && (br2 < size) &&
+		(branch2 > branch1 && branch2 > array[i]))
+	{
+		n = array[i];
+		array[i] = branch2;
+		array[br2] = n;
+		print_array(array, size_init);
+	}
+	if (br1 < size - 1)
+		check_tree(array, size_init, size, br1);
+	if (br2 < size - 1)
+		check_tree(array, size_init, size, br2);
+}
+/**
+ * heap_sort - sorts an array of integers
+ * in ascending order using the Heap
+ * sort algorithm
+ * @array: pointer to array
+ * @size: size of the pointer
+ *
+**/
 void heap_sort(int *array, size_t size)
 {
-	int i, tmp;
+	size_t i, size_init = size;
+	int n;
 
-	for (i = size / 2 - 1; i >= 0; i--)
-		heapify(array, i, size, size);
-	for (i = size -1; i >=0; i--)
+	if (!array)
+		return;
+	for (i = 0; i < size / 2 ; i++)
 	{
-		tmp = array[0];
-		array[0] = array[i];
-		array[i] = tmp;
-		print_array(array, size);
-		heapify(array, i, 0, size);
+		check_tree(array, size_init, size, size / 2 - 1 - i);
 	}
-}
-void heapify(int *array, int idx, int idx2, size_t size)
-{
-	int max = idx2;
-	int left = 2 * idx2 + 1;
-	int right = 2 * idx2 + 2;
-	int tmp;
+	for (i = 0; i < size_init - 1; i++)
+	{
+		n = array[0];
+		array[0] = array[size - 1 - i];
+		array[size - 1 - i] = n;
+		print_array(array, size_init);
+		check_tree(array, size_init, size - i - 1, 0);
+	}
 
-	if (left < idx && array[left] > array[max])
-		max = left;
-	if (right < idx && array[right] > array[max])
-		max = right;
-	if (max != idx2)
-	{
-		tmp = array[idx2];
-		array[idx2] = array[max];
-		array[max] = tmp;
-		print_array(array, size);
-		heapify(array, idx, max, size);
-	}
 }
