@@ -1,50 +1,41 @@
 #include "sort.h"
-#include <stdlib.h>
-
 /**
- * counting_sort - sorts an array of integers in ascending order
- * using the Counting sort algorithm
- * @array: Array to be sorted
- * @size: size of the array
- *
- * Return: void
- */
-void counting_sort(int *array, size_t size)
+  * heap_sort - heap sort algorithm
+  * @array: array to sort
+  * @size: size of array
+  */
+void heap_sort(int *array, size_t size)
 {
-	int *count_arr, k;
-	size_t i, j, arr_size;
+	int i, tmp;
 
-	if (array == NULL || size <= 1)
-		return;
-	arr_size = array[0];
-	for (i = 0; array[i]; i++)
+	for (i = size / 2 - 1; i >= 0; i--)
+		heapify(array, i, size, size);
+	for (i = size -1; i >=0; i--)
 	{
-		if (array[i] > (int)arr_size)
-			arr_size = array[i];
+		tmp = array[0];
+		array[0] = array[i];
+		array[i] = tmp;
+		print_array(array, size);
+		heapify(array, i, 0, size);
 	}
+}
+void heapify(int *array, int idx, int idx2, size_t size)
+{
+	int max = idx2;
+	int left = 2 * idx2 + 1;
+	int right = 2 * idx2 + 2;
+	int tmp;
 
-	arr_size += 1;
-
-	count_arr = malloc(arr_size * sizeof(int *));
-	if (count_arr == NULL)
-		return;
-
-	for (i = 0; i < arr_size; i++)
-		count_arr[i] = 0;
-
-	for (i = 0; i < size; i++)
-		count_arr[array[i]] += 1;
-
-	for (i = 0; i <= arr_size; i++)
-		count_arr[i] += count_arr[i - 1];
-
-	print_array(count_arr, arr_size);
-
-	for (i = 1, j = 0; i <= arr_size; i++)
-		if (count_arr[i] != count_arr[i - 1])
-		{
-			for (k = 0; k < count_arr[i] - count_arr[i - 1]; k++)
-				array[j++] = i;
-		}
-	free(count_arr);
+	if (left < idx && array[left] > array[max])
+		max = left;
+	if (right < idx && array[right] > array[max])
+		max = right;
+	if (max != idx2)
+	{
+		tmp = array[idx2];
+		array[idx2] = array[max];
+		array[max] = tmp;
+		print_array(array, size);
+		heapify(array, idx, max, size);
+	}
 }
